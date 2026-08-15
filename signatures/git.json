@@ -1,0 +1,85 @@
+{
+  "comment": "Per-tool git history signatures. Patterns are case-insensitive JS regexes. 'trailers' and 'message' run against the full commit message; 'authorName'/'authorEmail' against commit author fields. Every match is Tier A evidence.",
+  "tools": [
+    {
+      "id": "claude-code",
+      "name": "Claude Code (Anthropic)",
+      "trailers": ["Co-Authored-By:\\s*Claude\\b"],
+      "message": ["Generated with \\[?Claude Code\\]?", "🤖 Generated with Claude"],
+      "authorName": ["^claude(\\[bot\\])?$"],
+      "authorEmail": ["noreply@anthropic\\.com", "claude\\[bot\\]@users\\.noreply\\.github\\.com"]
+    },
+    {
+      "id": "github-copilot",
+      "name": "GitHub Copilot",
+      "trailers": ["Co-authored-by:\\s*(GitHub )?Copilot\\b"],
+      "message": [],
+      "authorName": ["copilot-swe-agent\\[bot\\]", "^Copilot$"],
+      "authorEmail": ["copilot@github\\.com", "\\+Copilot@users\\.noreply\\.github\\.com"]
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "trailers": ["Co-authored-by:\\s*Cursor(\\s*Agent)?\\b"],
+      "message": [],
+      "authorName": ["^Cursor Agent$"],
+      "authorEmail": ["cursoragent@cursor\\.com"]
+    },
+    {
+      "id": "aider",
+      "name": "Aider",
+      "trailers": [],
+      "message": ["^aider:"],
+      "authorName": ["\\(aider\\)"],
+      "authorEmail": []
+    },
+    {
+      "id": "devin",
+      "name": "Devin (Cognition)",
+      "trailers": [],
+      "message": [],
+      "authorName": ["devin-ai-integration\\[bot\\]"],
+      "authorEmail": ["@devin\\.ai"]
+    },
+    {
+      "id": "gpt-engineer",
+      "name": "gpt-engineer / Lovable",
+      "trailers": [],
+      "message": [],
+      "authorName": ["gpt-engineer-app\\[bot\\]"],
+      "authorEmail": []
+    },
+    {
+      "id": "openai-codex",
+      "name": "OpenAI Codex",
+      "trailers": ["Co-authored-by:\\s*(ChatGPT|Codex|OpenAI)\\b"],
+      "message": ["Generated (by|with) (OpenAI )?Codex"],
+      "authorName": [],
+      "authorEmail": []
+    },
+    {
+      "id": "gemini",
+      "name": "Google Gemini / Jules",
+      "trailers": ["Co-authored-by:\\s*Gemini\\b"],
+      "message": ["Generated with Gemini"],
+      "authorName": ["google-labs-jules\\[bot\\]"],
+      "authorEmail": []
+    },
+    {
+      "id": "windsurf",
+      "name": "Windsurf / Cascade",
+      "trailers": ["Co-authored-by:\\s*(Windsurf|Cascade)\\b"],
+      "message": [],
+      "authorName": [],
+      "authorEmail": []
+    },
+    {
+      "id": "sweep",
+      "name": "Sweep AI",
+      "trailers": [],
+      "message": [],
+      "authorName": ["sweep-ai\\[bot\\]"],
+      "authorEmail": []
+    }
+  ]
+}

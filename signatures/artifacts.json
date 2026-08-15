@@ -1,0 +1,16 @@
+{
+  "comment": "Per-tool file artifacts. 'paths' match exact repo-relative names (case-insensitive); 'dirs' match a directory name anywhere in the tree; 'prefixes' match a file basename prefix. Found in tree or recovered from deleted history = Tier B evidence.",
+  "tools": [
+    { "id": "claude-code", "name": "Claude Code (Anthropic)", "paths": ["CLAUDE.md", "CLAUDE.local.md"], "dirs": [".claude"], "prefixes": [] },
+    { "id": "cursor", "name": "Cursor", "paths": [".cursorrules"], "dirs": [".cursor"], "prefixes": [] },
+    { "id": "aider", "name": "Aider", "paths": [".aider.conf.yml"], "dirs": [], "prefixes": [".aider."] },
+    { "id": "github-copilot", "name": "GitHub Copilot", "paths": [".github/copilot-instructions.md"], "dirs": [], "prefixes": [] },
+    { "id": "windsurf", "name": "Windsurf", "paths": [".windsurfrules"], "dirs": [".windsurf"], "prefixes": [] },
+    { "id": "cline", "name": "Cline", "paths": [".clinerules"], "dirs": [".clinerules"], "prefixes": [] },
+    { "id": "gemini", "name": "Google Gemini CLI", "paths": ["GEMINI.md"], "dirs": [".gemini"], "prefixes": [] },
+    { "id": "openai-codex", "name": "OpenAI Codex", "paths": ["codex.md"], "dirs": [".codex"], "prefixes": [] },
+    { "id": "agents-spec", "name": "AGENTS.md (multi-tool agent spec)", "paths": ["AGENTS.md"], "dirs": [], "prefixes": [] },
+    { "id": "continue", "name": "Continue", "paths": [], "dirs": [".continue"], "prefixes": [] },
+    { "id": "roo", "name": "Roo Code", "paths": [".roomodes"], "dirs": [".roo"], "prefixes": [] }
+  ]
+}

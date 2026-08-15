@@ -1,0 +1,21 @@
+{
+  "comment": "Tier C — weak stylistic signals only. These phrases and patterns appear disproportionately in LLM-written comments/docs but ALSO in human writing. Findings from this catalog must always be labeled 'weak indication'.",
+  "commentPhrases": [
+    "It's important to note",
+    "It is important to note",
+    "Note that this",
+    "This ensures that",
+    "gracefully handle",
+    "handles gracefully",
+    "robust error handling",
+    "seamlessly",
+    "delve into",
+    "First, we",
+    "Next, we",
+    "Finally, we",
+    "Let's break this down"
+  ],
+  "commentEmDash": true,
+  "readmeEmojiHeaders": true,
+  "codeExtensions": [".js", ".mjs", ".cjs", ".ts", ".tsx", ".jsx", ".py", ".rb", ".go", ".rs", ".java", ".kt", ".c", ".h", ".cpp", ".cs", ".php", ".swift", ".sh", ".ps1", ".sql", ".css", ".scss", ".vue", ".svelte"]
+}

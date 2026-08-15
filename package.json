@@ -1,6 +1,6 @@
 {
   "name": "codehawk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Local, evidence-based AI code provenance auditor — find out which parts of a codebase were written by AI tools (Claude Code, Cursor, Copilot, Aider, …) from git history and tool artifacts. No score, only evidence. Zero dependencies, your code never leaves your machine.",
   "bin": { "codehawk": "./codehawk.js" },
   "main": "src/scan.js",

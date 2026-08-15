@@ -146,6 +146,35 @@ function commit(dir, msg, env) {
   check('Devin bot author detected', r.tools.some((t) => t.id === 'devin' && t.tierA.length >= 1));
 }
 
+// ---------- Fixture F: line-level attribution (--blame) ----------
+{
+  const dir = repo('blame');
+  // Human writes 6 lines.
+  write(dir, 'lib.js', 'line1\nline2\nline3\nline4\nline5\nline6\n');
+  commit(dir, 'human baseline');
+  // Claude commit replaces lines 3-5 and appends lines 7-8.
+  write(dir, 'lib.js', 'line1\nline2\nAI3\nAI4\nAI5\nline6\nAI7\nAI8\n');
+  commit(dir, 'Refactor lib\n\nCo-Authored-By: Claude <noreply@anthropic.com>');
+  // Human later edits line 4 back — should re-attribute that line to human.
+  write(dir, 'lib.js', 'line1\nline2\nAI3\nhuman4\nAI5\nline6\nAI7\nAI8\n');
+  commit(dir, 'human touch-up');
+
+  const r = scan(dir, { blame: true });
+  console.log('\nFixture F — line-level attribution:');
+  check('blame enabled', r.blame.enabled === true);
+  const f = (r.blame.files || []).find((x) => x.path === 'lib.js');
+  check('lib.js reported with AI lines', !!f);
+  const rangeStr = f ? f.ranges.map((x) => `${x.start}-${x.end}`).join(',') : '';
+  check('AI ranges are 3-3, 5-5, 7-8', rangeStr === '3-3,5-5,7-8', `got ${rangeStr}`);
+  check('AI line count = 4 of 8', !!f && f.aiLines === 4 && f.totalLines === 8);
+  check('ranges name Claude Code', !!f && f.ranges.every((x) => x.tool === 'claude-code'));
+  const html = render(r);
+  check('HTML has file-level attribution section', html.includes('File-level attribution'));
+  // Blame skipped cleanly when there is nothing to trace.
+  const clean = scan(path.join(ROOT, 'clean'), { blame: true });
+  check('blame skipped on clean repo with a reason', clean.blame.enabled === false && /no AI-attributed/.test(clean.blame.reason || ''));
+}
+
 console.log(`\n${passed} passed, ${failed} failed (fixtures in ${ROOT})`);
 try { fs.rmSync(ROOT, { recursive: true, force: true }); } catch {}
 process.exit(failed ? 1 : 0);

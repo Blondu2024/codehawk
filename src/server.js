@@ -20,6 +20,10 @@ const FORM = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <p>AI code provenance auditor. Everything runs locally — the code never leaves your machine. Paste the absolute path of the folder to audit (works with or without a .git history).</p>
 <form action="/report" method="get">
   <input name="path" placeholder="C:\\path\\to\\purchased-code" required autofocus>
+  <label style="display:flex;gap:8px;align-items:center;margin-top:12px;font-size:13px;color:#9aa3b2">
+    <input type="checkbox" name="blame" value="1" style="width:auto;margin:0">
+    Line-level attribution (git blame — exact lines per file; slower on large repos)
+  </label>
   <button type="submit">Audit this folder</button>
 </form></div></body></html>`;
 
@@ -31,7 +35,7 @@ const server = http.createServer((req, res) => {
       res.end(FORM);
     } else if (url.pathname === '/report') {
       const target = url.searchParams.get('path');
-      const result = scan(target);
+      const result = scan(target, { blame: url.searchParams.get('blame') === '1' });
       if (url.searchParams.get('format') === 'json') {
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify(result, null, 2));

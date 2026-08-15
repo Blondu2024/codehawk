@@ -22,6 +22,24 @@ function section(title, badge, intro, rows) {
   </section>`;
 }
 
+function blameSection(b) {
+  if (!b || !b.enabled) return '';
+  if (!b.filesWithAiLines) {
+    return `<section><h2>File-level attribution <span class="badge a">TIER A — DIRECT PROOF</span></h2>
+    <p class="intro">git blame found no lines currently attributed to AI-signed commits (later human edits re-attribute lines — see Limitations).</p></section>`;
+  }
+  const rows = b.files.map((f) => {
+    const ranges = f.ranges.map((r) =>
+      `<li>lines ${r.start === r.end ? r.start : `${r.start}–${r.end}`} ← commit <code>${esc(r.shortHash)}</code> (${esc(r.toolName)}${r.date ? ', ' + esc(r.date.slice(0, 10)) : ''})</li>`
+    ).join('');
+    return `<details class="blamefile"><summary><span class="pct">${f.pct}%</span> <code>${esc(f.path)}</code> <span class="mini">${f.aiLines}/${f.totalLines} lines from AI-attributed commits</span></summary>
+    <ul class="ranges">${ranges}</ul></details>`;
+  }).join('\n');
+  return `<section><h2>File-level attribution <span class="badge a">TIER A — DIRECT PROOF</span></h2>
+    <p class="intro">Which exact lines come from AI-attributed commits, via <code>git blame</code>. ${b.filesWithAiLines} of ${b.scannedFiles} scanned code files contain AI-attributed lines${b.truncated ? ` (showing top ${b.files.length})` : ''}. Percentages are a lower bound: a later human edit re-attributes a line to the human.</p>
+    ${rows}</section>`;
+}
+
 function render(result) {
   const r = result;
   const pct = r.git.commitCount ? Math.round((r.git.attributedCommitCount / r.git.commitCount) * 100) : 0;
@@ -70,6 +88,11 @@ function render(result) {
   .verdict{font-size:16px}
   footer{color:var(--muted);font-size:12px;margin-top:28px}
   a{color:var(--accent)}
+  details.blamefile{border-top:1px solid var(--line);padding:7px 0}
+  details.blamefile summary{cursor:pointer;font-size:13px}
+  .pct{display:inline-block;min-width:44px;font-weight:700;color:var(--a)}
+  .mini{color:var(--muted);font-size:12px}
+  ul.ranges{font-size:12px;color:var(--muted);font-family:ui-monospace,Consolas,monospace;margin:8px 0 4px;padding-left:60px}
 </style></head><body><div class="wrap">
 <h1>🦅 CodeHawk — AI code provenance report</h1>
 <div class="meta">Target: <code>${esc(r.target)}</code> · Generated ${esc(r.generatedAt)} · CodeHawk v${esc(r.version)} · Git history: ${r.git.available ? `${r.git.commitCount} commits analyzed` : 'NOT AVAILABLE'}</div>
@@ -78,6 +101,7 @@ function render(result) {
 <p class="intro">CodeHawk reports evidence, not a score. Tier A = direct machine-written proof · Tier B = strong indication · Tier C = weak stylistic signal. Tiers are never merged.</p></div>
 
 <div class="card">${toolSections || '<p class="intro">No per-tool Tier A/B evidence.</p>'}
+${blameSection(r.blame)}
 ${section('Commit anomalies', 'b', 'Commit sizes or cadence implausible for hand-written code. Indication, not proof — bulk imports and generated assets also look like this.', r.anomalies.map(evidenceRow))}
 ${section('Stylometry', 'c', 'LLM-typical phrasing in comments and docs. WEAK signal: humans write like this too. Supporting evidence only.', r.stylometry.map(evidenceRow))}
 </div>

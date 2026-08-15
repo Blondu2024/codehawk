@@ -36,6 +36,23 @@ Evidence: Tier A 434 · Tier B 116 · Tier C 100
 
 Tiers are reported separately and never merged into a single number.
 
+### Line-level attribution (`--blame`)
+
+Not just "this repo has AI traces" — **exactly which lines of which files**:
+
+```
+Line-level attribution: 310 of 338 scanned files contain AI-attributed lines
+  100%  lib/templates/layouts.ts  (1385/1385 lines)
+  100%  lib/cdn-libraries.ts     (535/535 lines)
+   ...
+```
+
+Every AI-attributed range in the report cites its commit: `lines 14–89 ←
+commit a1b2c3d (Claude Code, 2026-03-10)`. Cross-references `git blame` with
+the Tier A commit set — real attribution, not guessing. Caveat (also printed
+in the report): blame shows who *last* touched a line, so the numbers are a
+lower bound on AI involvement.
+
 Covered tools (extensible via `signatures/*.json` — PRs welcome): Claude Code,
 GitHub Copilot, Cursor, Aider, Devin, gpt-engineer/Lovable, OpenAI Codex,
 Gemini/Jules, Windsurf, Cline, Continue, Roo, Sweep.
@@ -50,6 +67,9 @@ cd codehawk
 
 # CLI: audit a folder (works with or without .git), get an HTML + JSON report
 node codehawk.js /path/to/code --html report.html --json report.json
+
+# With line-level attribution (slower on large repos)
+node codehawk.js /path/to/code --blame
 
 # Or the local web UI
 npm start          # → http://localhost:4480

@@ -11,8 +11,12 @@ function main() {
     console.log(`CodeHawk — AI code provenance auditor (local, evidence-based)
 
 Usage:
-  node codehawk.js <folder> [--html report.html] [--json report.json]
+  node codehawk.js <folder> [--blame] [--html report.html] [--json report.json]
   npm start                  launch the local web UI (http://localhost:4480)
+
+Options:
+  --blame   line-level attribution: exactly which lines of which files come
+            from AI-attributed commits (git blame; slower on large repos)
 
 Scans a codebase (with or without .git) for evidence of AI coding tools:
   Tier A  direct proof     git co-author trailers, tool signatures, AI authors
@@ -25,7 +29,11 @@ Scans a codebase (with or without .git) for evidence of AI coding tools:
   const htmlOut = args.includes('--html') ? args[args.indexOf('--html') + 1] : path.join(process.cwd(), 'codehawk-report.html');
   const jsonOut = args.includes('--json') ? args[args.indexOf('--json') + 1] : null;
 
-  const result = scan(target);
+  const result = scan(target, {
+    blame: args.includes('--blame'),
+    onProgress: (done, total) => process.stderr.write(`\rblame: ${done}/${total} files...`),
+  });
+  if (args.includes('--blame')) process.stderr.write('\n');
 
   const tierA = result.tools.reduce((n, t) => n + t.tierA.length, 0);
   const tierB = result.tools.reduce((n, t) => n + t.tierB.length, 0) + result.anomalies.length;
@@ -38,6 +46,15 @@ Scans a codebase (with or without .git) for evidence of AI coding tools:
   console.log(`Evidence: Tier A ${tierA} · Tier B ${tierB} · Tier C ${result.stylometry.length}`);
   for (const t of result.tools) {
     console.log(`  - ${t.name}: ${t.tierA.length} direct, ${t.tierB.length} artifacts`);
+  }
+  if (result.blame && result.blame.enabled) {
+    console.log(`\nLine-level attribution: ${result.blame.filesWithAiLines} of ${result.blame.scannedFiles} scanned files contain AI-attributed lines`);
+    for (const f of result.blame.files.slice(0, 10)) {
+      console.log(`  ${String(f.pct).padStart(3)}%  ${f.path}  (${f.aiLines}/${f.totalLines} lines)`);
+    }
+    if (result.blame.files.length > 10) console.log(`  ... full list in the HTML report`);
+  } else if (result.blame && result.blame.reason) {
+    console.log(`\nLine-level attribution skipped: ${result.blame.reason}`);
   }
 
   fs.writeFileSync(htmlOut, render(result));
